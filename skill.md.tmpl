@@ -1,0 +1,55 @@
+---
+name: {{.Name}}
+description: Search a local copy of the GitHub issues of {{.Repo}}. Use when looking for existing issues related to, or duplicating, a bug, error message, feature or component of {{.Repo}}, or for past discussion about one.
+---
+
+# {{.Repo}} issues
+
+The `issues/` directory next to this file holds a local copy of the {{.Scope}} in [{{.Repo}}](https://github.com/{{.Repo}}), one markdown file per issue, named `<number>.md`. Pull requests are not included. Paths below are relative to this skill's directory.
+
+## Refresh first
+
+The copy is only as recent as its last sync. Before searching, refresh it (this fetches only the issues updated since the last sync):
+
+```
+{{.Command}} -out <this skill's directory>
+```
+
+If `gh-issues-skill` is not installed or the sync fails, search the existing copy and mention that it may be out of date.
+
+## File format
+
+```
+---
+number: 123
+title: "Crash when the config file is empty"
+state: closed                 # open or closed
+state_reason: completed       # if set: completed, not_planned, duplicate or reopened
+labels: ["bug", "area/config"]
+author: octocat
+created: 2026-01-01T00:00:00Z
+updated: 2026-01-02T00:00:00Z
+closed: 2026-01-02T00:00:00Z  # closed issues only
+url: https://github.com/{{.Repo}}/issues/123
+---
+
+# <title>
+
+<body>
+
+## Comments
+
+### <author> at <time>
+
+<comment>
+```
+
+## Finding related issues
+
+1. Collect distinctive terms from the problem at hand: error messages, function, type and file names, component names, likely labels.
+2. Search with grep, trying several terms and spellings. For example:
+   - `grep -ril 'connection reset' issues/`
+   - `grep -l '^state: open' issues/*.md`
+   - `grep -l '"area/config"' issues/*.md`
+3. Read the promising candidates in full, including comments. Related issues and duplicates are often linked there as `#123` or by URL; follow those links too.
+4. Report each related issue by number and URL, whether it is open or closed, and a one-line reason why it is related.
